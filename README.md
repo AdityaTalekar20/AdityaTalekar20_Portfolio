@@ -3,7 +3,7 @@
 <h3 align="center">1st Year B.Tech CS Student @ NMIMS | Building things in C++ & Python</h3>
 
 <p align="center">
-  <a href="https://adityatalekar20.github.io/portfolio/">
+  <a href="https://adityatalekar20.github.io/AdityaTalekar20_Portfolio/">
     <img src="https://img.shields.io/badge/🌐_Portfolio-7FB069?style=for-the-badge&logoColor=white" />
   </a>
   <a href="https://www.linkedin.com/in/aditya-talekar-628266351">
@@ -82,7 +82,7 @@ I love solving coding problems the same way I love chasing a good run rate in cr
 
 ### 📫 Let's Connect
 
-- 🌐 Portfolio: [aditya-talekar-portfolio](https://adityatalekar20.github.io/portfolio/)
+- 🌐 Portfolio: [aditya-talekar-portfolio](https://adityatalekar20.github.io/AdityaTalekar20_Portfolio/)
 - ✉️ Email: [8a30adityatalekar@gmail.com](mailto:8a30adityatalekar@gmail.com)
 - 💼 LinkedIn: [aditya-talekar-628266351](https://www.linkedin.com/in/aditya-talekar-628266351)
 - 🐙 GitHub: [@AdityaTalekar20](https://github.com/AdityaTalekar20)
