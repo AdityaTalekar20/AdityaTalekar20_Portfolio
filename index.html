@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aditya Talekar — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night: #0D1B2A;
+    --surface: #122A3E;
+    --surface-2: #16334A;
+    --pitch: #7FB069;
+    --pitch-dim: #4C7A3A;
+    --ball: #C1444D;
+    --gold: #E0B04F;
+    --sky: #5FA8D3;
+    --lilac: #B48EE0;
+    --chalk: #F2F0E6;
+    --chalk-dim: #9FB2C2;
+    --line: #24425C;
+    --radius: 14px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--night);
+    background-image:
+      radial-gradient(ellipse 1000px 560px at 12% -8%, rgba(127,176,105,0.14), transparent 60%),
+      radial-gradient(ellipse 800px 560px at 100% 6%, rgba(193,68,77,0.10), transparent 55%),
+      radial-gradient(ellipse 700px 500px at 50% 100%, rgba(95,168,211,0.08), transparent 60%);
+    color: var(--chalk);
+    font-family: 'Manrope', sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .mono{ font-family: 'JetBrains Mono', monospace; }
+
+  /* ---------- floodlight grain ---------- */
+  .grain{
+    position: fixed; inset:0; pointer-events:none; z-index: 0; opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .wrap{ max-width: 940px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+
+  /* ---------- top bar ---------- */
+  header.bar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 26px 0; border-bottom: 1px solid var(--line);
+    position: sticky; top:0; background: rgba(13,27,42,0.86); backdrop-filter: blur(10px);
+    z-index: 50;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; font-family:'JetBrains Mono'; font-weight:700; letter-spacing:0.3px; }
+  .dot-row span{ display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:5px; }
+  .bar nav{ display:flex; align-items:center; }
+  .bar nav a{
+    color: var(--chalk-dim); text-decoration:none; font-size: 14px; margin-left: 22px; font-family:'JetBrains Mono';
+    transition: color .2s; position:relative; padding-bottom: 3px;
+  }
+  .bar nav a::after{
+    content:''; position:absolute; left:0; bottom:-1px; width:0; height:1px; background: var(--pitch); transition: width .25s;
+  }
+  .bar nav a:hover{ color: var(--pitch); }
+  .bar nav a.active{ color: var(--chalk); }
+  .bar nav a.active::after{ width: 100%; }
+
+  .burger{
+    display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding: 6px;
+  }
+  .burger span{ width: 22px; height: 2px; background: var(--chalk); display:block; transition: transform .25s, opacity .25s; }
+  .burger.open span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+  .burger.open span:nth-child(2){ opacity: 0; }
+  .burger.open span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+
+  @media (max-width: 640px){
+    .burger{ display:flex; }
+    .bar nav{
+      position: fixed; top: 65px; left: 0; right: 0; flex-direction: column; align-items: flex-start;
+      background: var(--surface); border-bottom: 1px solid var(--line); padding: 8px 24px 18px;
+      transform: translateY(-8px); opacity: 0; pointer-events: none; transition: all .22s; z-index: 49;
+    }
+    .bar nav.open{ transform: translateY(0); opacity: 1; pointer-events: auto; }
+    .bar nav a{ margin: 10px 0; font-size: 15px; }
+  }
+
+  /* ---------- reveal-on-scroll ---------- */
+  .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.in{ opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce){ .reveal{ opacity:1; transform:none; transition:none; } }
+
+  /* ---------- hero / terminal ---------- */
+  .hero{ padding: 84px 0 52px; }
+  .eyebrow{
+    font-family:'JetBrains Mono'; font-size: 12.5px; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--pitch); margin: 0 0 22px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:''; width: 26px; height:1px; background: var(--pitch-dim); display:inline-block; }
+
+  .terminal{
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: 0 24px 60px -20px rgba(0,0,0,0.6);
+    overflow:hidden;
+  }
+  .term-tabs{ display:flex; align-items:center; background: var(--surface-2); padding: 0 16px; border-bottom: 1px solid var(--line); }
+  .term-tabs .dots{ display:flex; gap:7px; padding: 15px 16px 15px 4px; }
+  .term-tabs .dots span{ width:11px; height:11px; border-radius:50%; }
+  .term-tabs .d1{ background:#C1444D } .term-tabs .d2{ background:#D3A54C } .term-tabs .d3{ background:#7FB069 }
+  .tab{
+    font-family:'JetBrains Mono'; font-size: 13px; color: var(--chalk-dim); padding: 15px 18px; border-right: 1px solid var(--line);
+    background: none; border-top: none; border-bottom: none; border-left: none; cursor: pointer; transition: color .2s, background .2s;
+  }
+  .tab:hover{ color: var(--chalk); }
+  .tab.active{ color: var(--chalk); background: var(--surface); border-bottom: 2px solid var(--pitch); }
+
+  .term-body{ padding: 36px 34px 42px; font-family:'JetBrains Mono'; font-size: 15px; min-height: 168px; }
+  .tab-pane{ display:none; }
+  .tab-pane.active{ display:block; animation: fadeIn .3s ease; }
+  @keyframes fadeIn{ from{ opacity:0; transform: translateY(4px);} to{ opacity:1; transform:none; } }
+  .code-block{
+    margin: 6px 0 0; font-family:'JetBrains Mono'; font-size: 14px; color: var(--chalk-dim);
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px;
+    white-space: pre-wrap; line-height: 1.7;
+  }
+  .term-line{ color: var(--chalk-dim); }
+  .term-line .prompt{ color: var(--pitch); }
+  .type-name{ font-size: 38px; font-weight: 800; color: var(--chalk); margin: 14px 0 8px; }
+  .type-name .accent{ background: linear-gradient(120deg, var(--pitch), var(--sky)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .role-line{ color: var(--chalk-dim); font-size: 15.5px; margin-bottom: 26px; }
+  .cursor{ display:inline-block; width:9px; height: 19px; background: var(--pitch); margin-left:4px; vertical-align: -3px; animation: blink 1s step-end infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  .comment-block{ color: var(--chalk-dim); font-size: 14px; border-left: 2px solid var(--gold); padding-left: 18px; margin-top: 8px; }
+  .comment-block em{ color: var(--pitch); font-style: normal; }
+
+  /* ---------- section shell ---------- */
+  section{ padding: 72px 0; border-bottom: 1px solid var(--line); }
+  section:last-of-type{ border-bottom: none; }
+  .sec-head{ display:flex; align-items:baseline; gap: 14px; margin-bottom: 34px; }
+  .sec-num{ font-family:'JetBrains Mono'; color: var(--pitch-dim); font-size: 13px; }
+  .sec-title{ font-family:'JetBrains Mono'; font-size: 22px; font-weight: 700; margin:0; }
+
+  /* ---------- about ---------- */
+  .about-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 640px){ .about-grid{ grid-template-columns: 1fr; } }
+  .about-card{
+    background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--card-accent, var(--pitch));
+    border-radius: var(--radius);
+    padding: 26px 24px 28px; transition: border-color .2s, transform .2s, box-shadow .2s;
+  }
+  .about-card:hover{ border-color: var(--card-accent, var(--pitch-dim)); border-top-color: var(--card-accent, var(--pitch)); transform: translateY(-3px); box-shadow: 0 16px 34px -18px rgba(0,0,0,0.5); }
+  .about-card .icon{ font-size: 22px; margin-bottom: 12px; display:block; }
+  .about-card p{ margin:0; font-size: 14.5px; color: var(--chalk-dim); }
+  .about-card strong{ color: var(--chalk); font-weight: 700; }
+
+  /* ---------- scoreboard / stack ---------- */
+  .scoreboard{
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+  }
+  .sb-head{
+    display:grid; grid-template-columns: 2fr 1fr 2fr; gap: 10px; padding: 16px 24px;
+    background: var(--surface-2); font-family:'JetBrains Mono'; font-size: 11.5px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--chalk-dim); border-bottom: 1px solid var(--line);
+  }
+  .sb-row{
+    display:grid; grid-template-columns: 2fr 1fr 2fr; gap: 10px; align-items:center; padding: 20px 24px;
+    border-bottom: 1px solid var(--line); font-size: 14.5px;
+  }
+  .sb-row:last-child{ border-bottom:none; }
+  .sb-row .player{ display:flex; align-items:center; gap: 12px; font-weight: 700; }
+  .sb-row .player .tag{ width:9px; height:9px; border-radius:3px; background: var(--row-accent, var(--pitch)); flex-shrink:0; }
+  .sb-row .status{ font-family:'JetBrains Mono'; font-size: 12.5px; color: var(--row-accent, var(--pitch)); }
+  .sb-row .status.dim{ color: var(--chalk-dim); }
+  .meter{ height: 7px; background: var(--line); border-radius: 4px; overflow:hidden; }
+  .meter > span{ display:block; height:100%; background: linear-gradient(90deg, var(--row-accent, var(--pitch-dim)), var(--row-accent-2, var(--pitch))); border-radius: 4px; }
+
+  .tool-chips{ display:flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+  .chip{
+    font-family:'JetBrains Mono'; font-size: 13px; color: var(--chip-color, var(--chalk-dim));
+    border: 1px solid var(--chip-color, var(--line)); padding: 8px 15px; border-radius: 20px;
+    background: color-mix(in srgb, var(--chip-color, var(--line)) 12%, var(--surface));
+  }
+
+  /* ---------- signature: the crossover strip ---------- */
+  .crossover{
+    position: relative; border: 1px solid var(--line); border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 65%, rgba(95,168,211,0.10) 100%);
+    padding: 38px 32px; overflow:hidden;
+  }
+  .crossover::before{
+    content: '🏏'; position:absolute; right: -10px; top: -10px; font-size: 110px; opacity: 0.07; transform: rotate(-18deg);
+  }
+  .crossover .label{ font-family:'JetBrains Mono'; font-size: 12px; letter-spacing: 2px; text-transform:uppercase; color: var(--ball); margin-bottom: 12px; }
+  .crossover p{ margin:0; font-size: 16.5px; max-width: 540px; color: var(--chalk); }
+  .crossover .stat-row{ display:flex; gap: 34px; margin-top: 28px; flex-wrap: wrap; }
+  .crossover .stat{ font-family:'JetBrains Mono'; }
+  .crossover .stat .num{ font-size: 28px; font-weight: 800; color: var(--stat-color, var(--pitch)); display:block; }
+  .crossover .stat .lbl{ font-size: 11.5px; color: var(--chalk-dim); letter-spacing: 1px; text-transform: uppercase; }
+
+  /* ---------- github pulse ---------- */
+  .pulse-grid{ display:grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  @media (max-width: 640px){ .pulse-grid{ grid-template-columns: 1fr 1fr; } }
+  .pulse-card{
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 24px 18px; text-align:center; border-bottom: 3px solid var(--pulse-accent, var(--pitch));
+    transition: transform .2s;
+  }
+  .pulse-card:hover{ transform: translateY(-3px); }
+  .pulse-card .p-num{ font-family:'JetBrains Mono'; font-size: 27px; font-weight: 800; color: var(--pulse-accent, var(--pitch)); }
+  .pulse-card .p-lbl{ font-size: 12px; color: var(--chalk-dim); margin-top: 6px; }
+  .pulse-note{ margin-top: 18px; font-size: 12.5px; color: var(--chalk-dim); font-family:'JetBrains Mono'; }
+
+  /* ---------- roadmap ---------- */
+  .road-list{ display:flex; flex-direction: column; gap: 4px; }
+  .road-item{
+    display:flex; gap: 18px; padding: 20px 4px; border-bottom: 1px solid var(--line); position: relative;
+  }
+  .road-item:last-child{ border-bottom: none; }
+  .road-dot{
+    width: 12px; height: 12px; border-radius: 50%; background: var(--road-accent, var(--pitch));
+    flex-shrink: 0; margin-top: 5px; box-shadow: 0 0 0 4px color-mix(in srgb, var(--road-accent, var(--pitch)) 20%, transparent);
+  }
+  .road-item h3{ margin: 0 0 5px; font-family:'JetBrains Mono'; font-size: 16px; color: var(--chalk); }
+  .road-item p{ margin: 0; font-size: 14px; color: var(--chalk-dim); max-width: 480px; }
+
+  /* ---------- contact CTA ---------- */
+  .contact-box{
+    display:flex; align-items:center; justify-content:space-between; gap: 24px; flex-wrap: wrap;
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
+    border: 1px solid var(--line); border-radius: var(--radius); padding: 34px;
+  }
+  .contact-box h3{ margin: 0 0 8px; font-family:'JetBrains Mono'; font-size: 19px; }
+  .contact-box p{ margin:0; color: var(--chalk-dim); font-size: 14px; max-width: 380px; }
+  .social-row{ display:flex; gap: 12px; flex-wrap: wrap; }
+  .social-btn{
+    display:flex; align-items:center; gap: 8px; text-decoration:none; color: var(--chalk);
+    font-family:'JetBrains Mono'; font-size: 13px; border: 1px solid var(--btn-color, var(--line)); padding: 11px 18px;
+    border-radius: 8px; transition: border-color .2s, background .2s, transform .2s; background: var(--surface-2);
+    cursor: pointer;
+  }
+  .social-btn:hover{ border-color: var(--btn-color, var(--pitch)); background: color-mix(in srgb, var(--btn-color, var(--pitch)) 18%, var(--surface-2)); transform: translateY(-2px); }
+  .social-btn.primary{ background: var(--ball); border-color: var(--ball); }
+  .social-btn.primary:hover{ background: color-mix(in srgb, var(--ball) 80%, white 10%); border-color: var(--ball); }
+
+  /* ---------- footer ---------- */
+  footer{ padding: 52px 0 72px; text-align:center; }
+  footer p{ font-family:'JetBrains Mono'; font-size: 13px; color: var(--chalk-dim); margin: 0; }
+  footer .name{ color: var(--pitch); }
+
+  @media (prefers-reduced-motion: reduce){
+    .cursor{ animation: none; }
+  }
+
+  @media (max-width: 640px){
+    .type-name{ font-size: 26px; }
+    .sb-head, .sb-row{ grid-template-columns: 1.4fr 1fr; }
+    .sb-head span:nth-child(3), .sb-row .meter-cell{ display:none; }
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<div class="wrap">
+  <header class="bar">
+    <div class="brand mono">
+      <span class="dot-row"><span style="background:#C1444D"></span><span style="background:#D3A54C"></span><span style="background:#7FB069"></span></span>
+      aditya.dev
+    </div>
+    <nav id="siteNav">
+      <a href="#about">about</a>
+      <a href="#stack">stack</a>
+      <a href="#pulse">pulse</a>
+      <a href="#contact">contact</a>
+    </nav>
+    <button class="burger" id="burgerBtn" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </header>
+
+  <section class="hero">
+    <p class="eyebrow">whoami</p>
+    <div class="terminal">
+      <div class="term-tabs">
+        <div class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <button class="tab active" data-tab="about">about.md</button>
+        <button class="tab" data-tab="stack">stack.json</button>
+      </div>
+      <div class="term-body">
+        <div class="tab-pane active" data-pane="about">
+          <div class="term-line"><span class="prompt">$</span> whoami</div>
+          <h1 class="type-name">Aditya Talekar<span class="accent">.</span><span class="cursor"></span></h1>
+          <div class="role-line">1st year B.Tech CS student @ NMIMS &nbsp;·&nbsp; building things in C++ &amp; Python</div>
+          <div class="comment-block">
+            /* Passionate programmer who enjoys building projects and learning new tech.<br>
+            Currently leveling up <em>C++</em> and <em>Python</em>. Always exploring web dev and open-source.<br>
+            Off the keyboard, you'll find me watching or playing cricket. */
+          </div>
+        </div>
+        <div class="tab-pane" data-pane="stack">
+          <div class="term-line"><span class="prompt">$</span> cat stack.json</div>
+          <pre class="code-block">{
+  "languages": ["C++", "Python"],
+  "learning": ["Web Development", "DSA"],
+  "tools": ["Git", "GitHub"],
+  "status": "always compiling"
+}</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="reveal">
+    <div class="sec-head"><span class="sec-num mono">01</span><h2 class="sec-title">About Me</h2></div>
+    <div class="about-grid">
+      <div class="about-card" style="--card-accent: var(--pitch)">
+        <span class="icon">💻</span>
+        <p><strong>Builder at heart.</strong> I enjoy building projects and learning new technologies, one repo at a time.</p>
+      </div>
+      <div class="about-card" style="--card-accent: var(--ball)">
+        <span class="icon">🏏</span>
+        <p><strong>Cricket enthusiast.</strong> If I'm not debugging, I'm probably watching or playing a match.</p>
+      </div>
+      <div class="about-card" style="--card-accent: var(--gold)">
+        <span class="icon">🌱</span>
+        <p><strong>Currently growing.</strong> Sharpening my C++ and Python fundamentals, week over week.</p>
+      </div>
+      <div class="about-card" style="--card-accent: var(--sky)">
+        <span class="icon">🌐</span>
+        <p><strong>Curious explorer.</strong> Into web development and open-source projects — always poking around something new.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="stack" class="reveal">
+    <div class="sec-head"><span class="sec-num mono">02</span><h2 class="sec-title">Tech Stack — Scoreboard</h2></div>
+    <div class="scoreboard">
+      <div class="sb-head">
+        <span>Skill</span><span>Overs In</span><span>Form</span>
+      </div>
+      <div class="sb-row" style="--row-accent: var(--pitch); --row-accent-2: var(--sky)">
+        <div class="player"><span class="tag"></span>C++</div>
+        <div class="status">Building</div>
+        <div class="meter"><span style="width:65%"></span></div>
+      </div>
+      <div class="sb-row" style="--row-accent: var(--gold); --row-accent-2: var(--pitch)">
+        <div class="player"><span class="tag"></span>Python</div>
+        <div class="status">Building</div>
+        <div class="meter"><span style="width:65%"></span></div>
+      </div>
+      <div class="sb-row" style="--row-accent: var(--sky); --row-accent-2: var(--lilac)">
+        <div class="player"><span class="tag"></span>Web Development</div>
+        <div class="status dim">Exploring</div>
+        <div class="meter"><span style="width:35%"></span></div>
+      </div>
+      <div class="sb-row" style="--row-accent: var(--ball); --row-accent-2: var(--gold)">
+        <div class="player"><span class="tag"></span>Git &amp; GitHub</div>
+        <div class="status">In use</div>
+        <div class="meter"><span style="width:55%"></span></div>
+      </div>
+    </div>
+    <div class="tool-chips">
+      <span class="chip" style="--chip-color: var(--pitch)">#cpp</span>
+      <span class="chip" style="--chip-color: var(--gold)">#python</span>
+      <span class="chip" style="--chip-color: var(--ball)">#git</span>
+      <span class="chip" style="--chip-color: var(--sky)">#github</span>
+      <span class="chip" style="--chip-color: var(--lilac)">#open-source</span>
+      <span class="chip" style="--chip-color: var(--pitch)">#web-dev</span>
+    </div>
+  </section>
+
+  <section id="roadmap" class="reveal">
+    <div class="sec-head"><span class="sec-num mono">03</span><h2 class="sec-title">What's Next</h2></div>
+    <div class="road-list">
+      <div class="road-item" style="--road-accent: var(--pitch)">
+        <span class="road-dot"></span>
+        <div>
+          <h3>Master DSA in C++</h3>
+          <p>Build a solid problem-solving base — arrays to graphs, one topic at a time.</p>
+        </div>
+      </div>
+      <div class="road-item" style="--road-accent: var(--gold)">
+        <span class="road-dot"></span>
+        <div>
+          <h3>Ship a real web project</h3>
+          <p>Move from tutorials to something live — a small full-stack app of my own.</p>
+        </div>
+      </div>
+      <div class="road-item" style="--road-accent: var(--sky)">
+        <span class="road-dot"></span>
+        <div>
+          <h3>Contribute to open-source</h3>
+          <p>Send a first real pull request to a project I actually use.</p>
+        </div>
+      </div>
+      <div class="road-item" style="--road-accent: var(--ball)">
+        <span class="road-dot"></span>
+        <div>
+          <h3>Join a coding club team</h3>
+          <p>Team up for a hackathon or a coding club project this year.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pulse" class="reveal">
+    <div class="sec-head"><span class="sec-num mono">04</span><h2 class="sec-title">GitHub Pulse</h2></div>
+    <div class="pulse-grid">
+      <div class="pulse-card" style="--pulse-accent: var(--pitch)"><div class="p-num">1st</div><div class="p-lbl">Year, B.Tech CS</div></div>
+      <div class="pulse-card" style="--pulse-accent: var(--gold)"><div class="p-num">2</div><div class="p-lbl">Core Languages</div></div>
+      <div class="pulse-card" style="--pulse-accent: var(--sky)"><div class="p-num">Git</div><div class="p-lbl">Version Control</div></div>
+      <div class="pulse-card" style="--pulse-accent: var(--ball)"><div class="p-num">OSS</div><div class="p-lbl">Exploring</div></div>
+    </div>
+    <p class="pulse-note">// connect your real GitHub username in the code to swap this for a live contributions graph</p>
+  </section>
+
+  <section id="crossover" class="reveal">
+    <div class="sec-head"><span class="sec-num mono">05</span><h2 class="sec-title">Fun Fact</h2></div>
+    <div class="crossover">
+      <p class="label">// two things I never get tired of</p>
+      <p>I love solving coding problems the same way I love chasing a good run rate — steady practice, small wins, and the occasional six. Projects and pitches, same energy.</p>
+      <div class="stat-row">
+        <div class="stat" style="--stat-color: var(--pitch)"><span class="num">2</span><span class="lbl">Core Languages</span></div>
+        <div class="stat" style="--stat-color: var(--gold)"><span class="num">1st</span><span class="lbl">Year, B.Tech CS</span></div>
+        <div class="stat" style="--stat-color: var(--ball)"><span class="num">∞</span><span class="lbl">Overs of Cricket</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="reveal">
+    <div class="sec-head"><span class="sec-num mono">06</span><h2 class="sec-title">Let's Connect</h2></div>
+    <div class="contact-box">
+      <div>
+        <h3>Open to collab &amp; conversation</h3>
+        <p>Drop a message about a project, an open-source idea, or just to talk cricket.</p>
+      </div>
+      <div class="social-row">
+        <a class="social-btn primary" href="mailto:8a30adityatalekar@gmail.com">✉ Email</a>
+        <button class="social-btn" id="copyEmailBtn" style="--btn-color: var(--gold)" type="button">⧉ Copy Email</button>
+        <a class="social-btn" style="--btn-color: var(--chalk)" href="https://github.com/AdityaTalekar20/AdityaTalekar20" target="_blank" rel="noopener">GitHub</a>
+        <a class="social-btn" style="--btn-color: var(--sky)" href="https://www.linkedin.com/in/aditya-talekar-628266351" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>crafted by <span class="name">Aditya Talekar</span> &nbsp;·&nbsp; NMIMS &nbsp;·&nbsp; still compiling...</p>
+  </footer>
+</div>
+
+<script>
+  // terminal tab switching
+  const tabs = document.querySelectorAll('.tab[data-tab]');
+  const panes = document.querySelectorAll('.tab-pane[data-pane]');
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => x.classList.remove('active'));
+    panes.forEach(p => p.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelector(`.tab-pane[data-pane="${t.dataset.tab}"]`).classList.add('active');
+  }));
+
+  // copy email button
+  const copyBtn = document.getElementById('copyEmailBtn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', async () => {
+      const email = '8a30adityatalekar@gmail.com';
+      const original = copyBtn.textContent;
+      try {
+        await navigator.clipboard.writeText(email);
+        copyBtn.textContent = '✓ Copied!';
+      } catch (e) {
+        copyBtn.textContent = email;
+      }
+      setTimeout(() => { copyBtn.textContent = original; }, 1800);
+    });
+  }
+
+  // mobile nav toggle
+  const burger = document.getElementById('burgerBtn');
+  const nav = document.getElementById('siteNav');
+  burger.addEventListener('click', () => {
+    burger.classList.toggle('open');
+    nav.classList.toggle('open');
+  });
+  nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    burger.classList.remove('open');
+    nav.classList.remove('open');
+  }));
+
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('in'));
+  }
+
+  // active link highlight
+  const navLinks = [...nav.querySelectorAll('a')];
+  const sections = navLinks.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const setActive = () => {
+    let current = sections[0];
+    const y = window.scrollY + 120;
+    sections.forEach(s => { if (s.offsetTop <= y) current = s; });
+    navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current.id));
+  };
+  window.addEventListener('scroll', setActive, { passive: true });
+  setActive();
+</script>
+</body>
+</html>
